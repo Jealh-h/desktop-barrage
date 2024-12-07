@@ -1,5 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
 
 export const Barrage = () => {
-  return <div>Hello、barrage Page</div>;
+  const [timeStringArray, setTimeStringArray] = useState([]);
+  const addTimeString = () => {
+    setTimeStringArray((d) => {
+      return [...d, new Date().toTimeString()];
+    });
+  };
+  return (
+    <div>
+      Hello、barrage Page
+      <button onClick={addTimeString}>添加</button>
+      <ul>
+        {timeStringArray.map((s) => {
+          return <li>{s}</li>;
+        })}
+      </ul>
+    </div>
+  );
 };
