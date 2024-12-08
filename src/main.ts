@@ -1,7 +1,9 @@
-import { app, BrowserWindow, globalShortcut } from "electron";
+import { app, BrowserWindow, globalShortcut, dialog } from "electron";
 import path from "path";
 import started from "electron-squirrel-startup";
+import IpcController from "./common/ipcMain";
 import { createTransparentWindow } from "./barrage-window.main";
+import { IPC_EVENT_CHANNEL_NAME, MAIN_THREAD_FORWARD_EVENT } from "./constants";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -15,6 +17,7 @@ const createWindow = () => {
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
+      nodeIntegration: true,
     },
   });
 
@@ -40,14 +43,50 @@ const createWindow = () => {
       mainWindow.webContents.send("focus-input"); // 向渲染进程发送消息，触发输入框聚焦
     }
   });
+
+  return mainWindow;
 };
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
-  createTransparentWindow();
-  createWindow();
+  const transparentWindow = createTransparentWindow();
+  const mainWindow = createWindow();
+
+  // 发送给 barrage 窗口，添加弹幕
+  IpcController.registry(
+    IPC_EVENT_CHANNEL_NAME.ADD_BARRAGE_TO_BARRAGE_WINDOW,
+    (_, d) => {
+      console.log(">>", d);
+      // // 弹出消息提示框
+      // dialog
+      //   .showMessageBox(mainWindow, {
+      //     type: "info",
+      //     title: "提示",
+      //     message: "这是一个消息提示框",
+      //     buttons: ["确定", "取消"],
+      //   })
+      //   .then((result) => {
+      //     console.log("用户选择:", result.response); // 0 表示第一个按钮，1 表示第二个按钮
+      //   });
+      transparentWindow.webContents.send(
+        MAIN_THREAD_FORWARD_EVENT.ADD_BARRAGE,
+        d
+      );
+    }
+  );
+
+  // 发送给主窗口，通知添加弹幕完成
+  // IpcController.registry(
+  //   IPC_EVENT_CHANNEL_NAME.ADD_BARRAGE_TO_BARRAGE_WINDOW,
+  //   (_, d) => {
+  //     mainWindow.webContents.send(
+  //       MAIN_THREAD_FORWARD_EVENT.COMPLETE_BARRAGE_ADD,
+  //       d
+  //     );
+  //   }
+  // );
 });
 
 // Quit when all windows are closed, except on macOS. There, it's common

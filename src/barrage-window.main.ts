@@ -1,4 +1,4 @@
-import { app, BrowserWindow, screen, ipcMain } from "electron";
+import { BrowserWindow, screen } from "electron";
 import * as path from "path";
 
 /**
@@ -17,6 +17,7 @@ export function createTransparentWindow() {
     skipTaskbar: true, // 不显示在任务栏中
     webPreferences: {
       nodeIntegration: true,
+      preload: path.join(__dirname, "preload.js"),
     },
     resizable: false, // 禁止窗口大小调整
   });
@@ -36,7 +37,7 @@ export function createTransparentWindow() {
   // 加载透明窗口 HTML 文件
   // transparentWindow.loadFile("index.barrage.html");
 
-  // transparentWindow.webContents.openDevTools();
+  transparentWindow.webContents.openDevTools();
   // 监听关闭事件
   transparentWindow.on("closed", () => {
     transparentWindow.destroy();
@@ -44,4 +45,5 @@ export function createTransparentWindow() {
 
   // 使透明窗口支持点击穿透，即允许用户操作下方的窗口
   // transparentWindow.setIgnoreMouseEvents(true); // 禁用鼠标事件
+  return transparentWindow;
 }
