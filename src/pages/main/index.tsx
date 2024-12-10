@@ -7,27 +7,27 @@ import {
 } from "../../constants";
 
 export const Main = () => {
+  const [inputValue, setInputValue] = React.useState("");
+  const inputRef = React.useRef<HTMLInputElement>(null);
   const sendAddBarrageEvent = () => {
-    // ipcRenderer.send(
-    //   IPC_EVENT_CHANNEL_NAME.ADD_BARRAGE_TO_BARRAGE_WINDOW,
-    //   "params_1"
-    // );
-    console.log("send>>>");
+    const text = inputRef.current?.value?.trim();
+    if (!text) return;
     window?.electron?.notificationApi?.sendMessage(
       IPC_EVENT_CHANNEL_NAME.ADD_BARRAGE_TO_BARRAGE_WINDOW,
-      "123"
+      {
+        msg: text,
+      }
     );
+    inputRef.current.value = "";
   };
 
   return (
     <div className={styles.title}>
-      hello、React +
-      <div
-        onClick={() => {
-          sendAddBarrageEvent();
-        }}
-      >
-        发送
+      <div className={styles.compactWrapper}>
+        <input ref={inputRef} className={styles.input} type="text" />
+        <button className={styles.btn} onMouseUp={sendAddBarrageEvent}>
+          发送
+        </button>
       </div>
     </div>
   );
