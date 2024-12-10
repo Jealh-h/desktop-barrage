@@ -26,13 +26,15 @@ export const Barrage = () => {
   }, []);
 
   return (
-    <div>
+    <div className={styles.danmuWrapper}>
       Hello、barrage Page
-      <ul>
-        {timeStringArray.map((s) => {
-          return <li>{s}</li>;
-        })}
-      </ul>
+      {timeStringArray.map((s) => {
+        return (
+          <div className={`${styles.danmuItem} ${styles.danmuItemAnimation}`}>
+            {s}
+          </div>
+        );
+      })}
     </div>
   );
 };

@@ -1,0 +1,31 @@
+.danmuWrapper {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+
+.danmuItem {
+  display: flex;
+  position: absolute;
+  left: 100%;
+  color: #000;
+}
+
+/* 弹幕动画 */
+.danmuItemAnimation {
+  animation-name: fade-in;
+  animation-duration: 10s;
+  animation-fill-mode: forwards;
+  animation-timing-function: linear;
+}
+
+@keyframes fade-in {
+  0% {
+    left: 100%;
+  }
+
+  100% {
+    left: 0%;
+  }
+}
