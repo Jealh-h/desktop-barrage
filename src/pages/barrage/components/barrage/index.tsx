@@ -1,4 +1,11 @@
-import React, { ReactNode } from "react";
+import React, {
+  ReactNode,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
+import "./index.css";
 
 class EventEmitter {
   private eventMap: Record<string, Array<Function>> = {};
@@ -26,18 +33,30 @@ class EventEmitter {
   }
 }
 
+enum BarrageItemEventEnum {
+  /** 完全进入屏幕 */
+  ENTERED = "ENTERED",
+  /** 完全消失于屏幕 */
+  DISAPPEAR = "DISPAAEAR",
+}
+
+type CustomStyle = React.CSSProperties & { [key: string]: unknown };
+
 interface IBarrageItemConfig {
   msg: ReactNode;
-  style?: React.CSSProperties;
+  style?: CustomStyle;
 }
 
 class BarrageItem extends EventEmitter {
-  private barrageConfig: IBarrageItemConfig;
+  public barrageConfig: IBarrageItemConfig;
+  public key: string;
   /** 是否在屏幕中 */
   private active: boolean;
   constructor(config: IBarrageItemConfig) {
     super();
     this.barrageConfig = config;
+    // 以创建时间为 key
+    this.key = `${new Date().valueOf()}`;
   }
 
   start() {}
@@ -59,16 +78,20 @@ class BarrageManager extends EventEmitter {
     this.barrageQueue = [];
   }
 
+  get queue() {
+    return this.barrageQueue;
+  }
+
   pushBarrage(barrageItem: BarrageItem) {
     this.barrageQueue.push(barrageItem);
   }
 
   popBarrage() {
-    return this.barrageQueue.pop();
+    if (this.barrageQueue.length) return this.barrageQueue.pop();
   }
 
   shiftBarrage() {
-    return this.barrageQueue.shift();
+    if (this.barrageQueue.length) return this.barrageQueue.shift();
   }
 
   startQueue() {
@@ -76,8 +99,135 @@ class BarrageManager extends EventEmitter {
     if (!this.barrageQueue.length) return;
     const barrageItem = this.shiftBarrage();
     barrageItem.start();
-    barrageItem.on("end", () => {
+    barrageItem.on(BarrageItemEventEnum.ENTERED, () => {
       this.startQueue();
     });
   }
+
+  removeBarrageItem(barrageItem: BarrageItem) {
+    this.barrageQueue = this.barrageQueue.filter((item) => {
+      item.key != barrageItem.key;
+    });
+  }
 }
+
+export const useBarrage = () => {
+  const currentBarrageManagerRef = useRef(new BarrageManager());
+  const [barrageList, setBarrageList] = useState<Array<BarrageItem>>([]);
+  const currentBarrageManager = currentBarrageManagerRef.current;
+
+  function addBarrageItem(barrageItem: BarrageItem) {}
+
+  function addBarrage(barrage: BarrageItem) {
+    // 注册完成事件
+    barrage.on(BarrageItemEventEnum.DISAPPEAR, () => {
+      console.log(">>> disappear");
+      currentBarrageManager.removeBarrageItem(barrage);
+      setBarrageList(currentBarrageManager.queue);
+    });
+
+    // 添加 manager 队列
+    currentBarrageManager.pushBarrage(barrage);
+
+    // 开始动画
+    pop();
+  }
+
+  function pop() {
+    const barrageItem = currentBarrageManager.shiftBarrage();
+    if (barrageItem) {
+      setBarrageList((pre) => [...pre, barrageItem]);
+    }
+  }
+
+  return {
+    barrageList,
+    addBarrageItem,
+    addBarrage,
+    start: pop,
+  };
+};
+
+const BarrageItemComp: React.FC<{ barrageItem: BarrageItem }> = (props) => {
+  const { barrageItem } = props;
+  const textDom = useRef<HTMLDivElement>();
+  const [style, setStyle] = useState<CustomStyle>({
+    ...(barrageItem.barrageConfig.style || {}),
+  });
+
+  const calcElePos = () => {
+    const textNode = textDom.current;
+    const nodeWidth = textNode.clientWidth;
+    const windowWidth = window.innerWidth;
+    const offsetWidth = nodeWidth + windowWidth + "px";
+
+    // 起点位置
+    const start = {
+      ["--offset"]: offsetWidth,
+    };
+    // 终止位置
+    const end = {
+      ["--translateX"]: -(windowWidth + nodeWidth * 2) + "px",
+    };
+
+    setStyle({
+      ...style,
+      ...start,
+      ...end,
+    });
+  };
+
+  useEffect(() => {
+    calcElePos();
+  }, []);
+
+  const onAnimationEnd = () => {
+    barrageItem.emit(BarrageItemEventEnum.DISAPPEAR);
+  };
+
+  return (
+    <div
+      ref={textDom}
+      onAnimationEnd={onAnimationEnd}
+      className="barrage-item"
+      style={style}
+    >
+      {barrageItem.barrageConfig.msg}
+    </div>
+  );
+};
+
+export interface BarrageComponentRef {
+  addBarrage: (msg: string, style: CustomStyle) => void;
+}
+
+export const BarrageComponent = React.forwardRef((_p, ref) => {
+  const { barrageList, addBarrage } = useBarrage();
+
+  const innerAddBarrage = (msg: string, style: CustomStyle) => {
+    addBarrage(
+      new BarrageItem({
+        msg,
+        style,
+      })
+    );
+  };
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      addBarrage: innerAddBarrage,
+    }),
+    []
+  );
+
+  return (
+    <div className="barrage-wrapper">
+      {barrageList.map((item) => {
+        return (
+          <BarrageItemComp key={item.key} barrageItem={item}></BarrageItemComp>
+        );
+      })}
+    </div>
+  );
+});
