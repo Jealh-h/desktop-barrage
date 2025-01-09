@@ -47,6 +47,8 @@ interface IBarrageItemConfig {
   style?: CustomStyle;
 }
 
+export const DEFAULT_FONT_SIZE = 16;
+
 class BarrageItem extends EventEmitter {
   public barrageConfig: IBarrageItemConfig;
   public key: string;
@@ -56,7 +58,21 @@ class BarrageItem extends EventEmitter {
     super();
     this.barrageConfig = config;
     // 以创建时间为 key
-    this.key = `${new Date().valueOf()}`;
+    this.key = `${new Date().valueOf()}_${Math.random()}`;
+  }
+
+  updateStyle(newStyle: CustomStyle = {}) {
+    this.barrageConfig.style = {
+      ...(this.barrageConfig.style || {}),
+      ...newStyle,
+    };
+  }
+
+  calcTopOffset(offsetProportion: number) {
+    const { fontSize = DEFAULT_FONT_SIZE } = this.barrageConfig.style || {};
+    this.updateStyle({
+      ["--offsetTop"]: Number(fontSize) * offsetProportion + "px",
+    });
   }
 
   start() {}
@@ -115,15 +131,16 @@ export const useBarrage = () => {
   const currentBarrageManagerRef = useRef(new BarrageManager());
   const [barrageList, setBarrageList] = useState<Array<BarrageItem>>([]);
   const currentBarrageManager = currentBarrageManagerRef.current;
-
-  function addBarrageItem(barrageItem: BarrageItem) {}
+  const offsetProportion = useRef<number>(0);
+  const timer = useRef<NodeJS.Timeout>();
 
   function addBarrage(barrage: BarrageItem) {
     // 注册完成事件
     barrage.on(BarrageItemEventEnum.DISAPPEAR, () => {
-      console.log(">>> disappear");
-      currentBarrageManager.removeBarrageItem(barrage);
-      setBarrageList(currentBarrageManager.queue);
+      // 只能用回调获取最新的 barrageList
+      setBarrageList((_barrageList) =>
+        _barrageList.filter((item) => item.key !== barrage.key)
+      );
     });
 
     // 添加 manager 队列
@@ -136,13 +153,22 @@ export const useBarrage = () => {
   function pop() {
     const barrageItem = currentBarrageManager.shiftBarrage();
     if (barrageItem) {
+      barrageItem.calcTopOffset(offsetProportion.current);
+      if (!timer.current) {
+        // 间隔一秒复位
+        offsetProportion.current += 1;
+        timer.current = setTimeout(() => {
+          offsetProportion.current -= 1;
+          timer.current = null;
+        }, 2000);
+      }
+
       setBarrageList((pre) => [...pre, barrageItem]);
     }
   }
 
   return {
     barrageList,
-    addBarrageItem,
     addBarrage,
     start: pop,
   };
@@ -185,10 +211,16 @@ const BarrageItemComp: React.FC<{ barrageItem: BarrageItem }> = (props) => {
     barrageItem.emit(BarrageItemEventEnum.DISAPPEAR);
   };
 
+  const toggleAnimation = () => {
+    textDom.current.classList.toggle("roll-animation-paused");
+  };
+
   return (
     <div
       ref={textDom}
       onAnimationEnd={onAnimationEnd}
+      onMouseEnter={toggleAnimation}
+      onMouseLeave={toggleAnimation}
       className="barrage-item"
       style={style}
     >

@@ -8,12 +8,18 @@
 .barrage-item {
   position: absolute;
   left: var(--offset, 0);
+  top: var(--offsetTop, 0);
   animation-name: roll;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
-  animation-duration: var(--duration, 4s);
+  animation-duration: var(--duration, 6s);
   animation-iteration-count: 1;
   animation-delay: 0s;
+  animation-play-state: running;
+}
+
+.roll-animation-paused {
+  animation-play-state: paused;
 }
 
 @keyframes roll {
