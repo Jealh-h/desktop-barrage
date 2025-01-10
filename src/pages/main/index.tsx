@@ -6,6 +6,9 @@ import {
   MAIN_THREAD_FORWARD_EVENT,
 } from "../../constants";
 
+const fontSizeOption = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
+const fontWeightOption = ["normal", "bold", "bolder"];
+
 export const Main = () => {
   const [inputValue, setInputValue] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -24,10 +27,39 @@ export const Main = () => {
   return (
     <div className={styles.title}>
       <div className={styles.compactWrapper}>
-        <input ref={inputRef} className={styles.input} type="text" />
+        <input
+          ref={inputRef}
+          className={styles.input}
+          placeholder="发个弹幕试一试吧"
+          type="text"
+        />
         <button className={styles.btn} onMouseUp={sendAddBarrageEvent}>
           发送
         </button>
+      </div>
+      <div className={styles.styleConfigWrapper}>
+        <form action="" className={styles.formWrapper}>
+          <div className={styles.formItem}>
+            <label htmlFor="fontSize">字体大小：</label>
+            <select name="fontSize">
+              {fontSizeOption.map((size) => {
+                return <option value={size}>{size}</option>;
+              })}
+            </select>
+          </div>
+          <div className={styles.formItem}>
+            <label htmlFor="color">字体颜色：</label>
+            <input name="color" type="color" />
+          </div>
+          <div className={styles.formItem}>
+            <label htmlFor="fontWeight">字体粗细：</label>
+            <select name="fontWeight">
+              {fontWeightOption.map((fontWeight) => {
+                return <option value={fontWeight}>{fontWeight}</option>;
+              })}
+            </select>
+          </div>
+        </form>
       </div>
     </div>
   );

@@ -1,14 +1,14 @@
 .title {
   color: #333;
-  font-size: 24px;
+  /* font-size: 24px; */
   padding: 2rem;
 }
 
 .compactWrapper {
   margin: 0 auto;
   display: flex;
-  border-radius: 12px;
-  box-shadow: 0 0 5px 1px #eee;
+  border-radius: 12px 12px 0 0;
+  box-shadow: 0 -1px 5px 1px #eee;
 }
 
 /* 输入框样式=================================== */
@@ -17,6 +17,7 @@
   border: none;
   padding: 4px 6px;
   border-radius: 12px 0 0 12px;
+  overflow: hidden;
 }
 
 .input:focus {
@@ -34,9 +35,27 @@
   /* margin-left: 20px; */
   border: none;
   padding: 12px 24px;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 12px 0 0;
 }
 
 .btn:active {
   background-color: #ddd;
+}
+
+/* 样式设置 */
+
+.styleConfigWrapper {
+  padding: 8px 16px;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 1px 5px 1px #eee;
+}
+
+.formWrapper {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.formItem {
+  margin-right: 20px;
+  flex-shrink: 0;
 }
