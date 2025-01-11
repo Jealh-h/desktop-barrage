@@ -10,8 +10,8 @@ export const Barrage = () => {
     window?.electron?.notificationApi?.onMessage(
       MAIN_THREAD_FORWARD_EVENT.ADD_BARRAGE,
       (data: Record<string, any>) => {
-        const { msg } = data;
-        barrageRef.current?.addBarrage(msg, {});
+        const { msg, style } = data;
+        barrageRef.current?.addBarrage(msg, style);
       }
     );
   }, []);

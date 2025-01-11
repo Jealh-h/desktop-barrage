@@ -53,6 +53,7 @@
 .formWrapper {
   display: flex;
   flex-wrap: wrap;
+  background-color: #fff;
 }
 
 .formItem {

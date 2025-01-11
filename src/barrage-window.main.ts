@@ -37,13 +37,12 @@ export function createTransparentWindow() {
   // 加载透明窗口 HTML 文件
   // transparentWindow.loadFile("index.barrage.html");
 
-  transparentWindow.webContents.openDevTools();
   // 监听关闭事件
   transparentWindow.on("closed", () => {
     transparentWindow.destroy();
   });
 
   // 使透明窗口支持点击穿透，即允许用户操作下方的窗口
-  // transparentWindow.setIgnoreMouseEvents(true); // 禁用鼠标事件
+  transparentWindow.setIgnoreMouseEvents(true); // 禁用鼠标事件
   return transparentWindow;
 }

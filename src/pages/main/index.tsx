@@ -1,17 +1,28 @@
 import React from "react";
-// import { ipcRenderer } from "electron";
 import styles from "./index.module.css";
-import {
-  IPC_EVENT_CHANNEL_NAME,
-  MAIN_THREAD_FORWARD_EVENT,
-} from "../../constants";
+import { IPC_EVENT_CHANNEL_NAME } from "../../constants";
 
-const fontSizeOption = [10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36];
+const fontSizeOption = [
+  "10px",
+  "12px",
+  "14px",
+  "16px",
+  "18px",
+  "20px",
+  "22px",
+  "24px",
+  "26px",
+  "28px",
+  "30px",
+  "32px",
+  "34px",
+  "36px",
+];
 const fontWeightOption = ["normal", "bold", "bolder"];
 
 export const Main = () => {
-  const [inputValue, setInputValue] = React.useState("");
   const inputRef = React.useRef<HTMLInputElement>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
   const sendAddBarrageEvent = () => {
     const text = inputRef.current?.value?.trim();
     if (!text) return;
@@ -19,9 +30,20 @@ export const Main = () => {
       IPC_EVENT_CHANNEL_NAME.ADD_BARRAGE_TO_BARRAGE_WINDOW,
       {
         msg: text,
+        style: getAllValue(),
       }
     );
     inputRef.current.value = "";
+  };
+
+  const getAllValue = () => {
+    const elements = formRef.current;
+    const value: Record<string, unknown> = {};
+    for (let el of elements) {
+      // @ts-ignore
+      value[el.name] = el.value;
+    }
+    return value;
   };
 
   return (
@@ -29,6 +51,7 @@ export const Main = () => {
       <div className={styles.compactWrapper}>
         <input
           ref={inputRef}
+          autoFocus
           className={styles.input}
           placeholder="发个弹幕试一试吧"
           type="text"
@@ -38,26 +61,47 @@ export const Main = () => {
         </button>
       </div>
       <div className={styles.styleConfigWrapper}>
-        <form action="" className={styles.formWrapper}>
+        <form
+          onChange={(e) => {
+            console.log(e);
+          }}
+          action=""
+          ref={formRef}
+          className={styles.formWrapper}
+        >
           <div className={styles.formItem}>
-            <label htmlFor="fontSize">字体大小：</label>
-            <select name="fontSize">
-              {fontSizeOption.map((size) => {
-                return <option value={size}>{size}</option>;
-              })}
-            </select>
+            <label htmlFor="fontSize">
+              字体大小：
+              <select name="fontSize">
+                {fontSizeOption.map((size) => {
+                  return (
+                    <option key={size} value={size}>
+                      {size}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
           </div>
           <div className={styles.formItem}>
-            <label htmlFor="color">字体颜色：</label>
-            <input name="color" type="color" />
+            <label htmlFor="color">
+              字体颜色：
+              <input name="color" type="color" />
+            </label>
           </div>
           <div className={styles.formItem}>
-            <label htmlFor="fontWeight">字体粗细：</label>
-            <select name="fontWeight">
-              {fontWeightOption.map((fontWeight) => {
-                return <option value={fontWeight}>{fontWeight}</option>;
-              })}
-            </select>
+            <label htmlFor="fontWeight">
+              字体粗细：
+              <select name="fontWeight">
+                {fontWeightOption.map((fontWeight) => {
+                  return (
+                    <option key={fontWeight} value={fontWeight}>
+                      {fontWeight}
+                    </option>
+                  );
+                })}
+              </select>
+            </label>
           </div>
         </form>
       </div>

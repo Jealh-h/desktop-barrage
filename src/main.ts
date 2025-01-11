@@ -13,8 +13,11 @@ if (started) {
 const createWindow = () => {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 500,
+    height: 300,
+    // frame: false, // 无边框
+    // resizable: false,
+    // transparent: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
@@ -58,7 +61,6 @@ app.on("ready", () => {
   IpcController.registry(
     IPC_EVENT_CHANNEL_NAME.ADD_BARRAGE_TO_BARRAGE_WINDOW,
     (_, d) => {
-      console.log(">>", d);
       // // 弹出消息提示框
       // dialog
       //   .showMessageBox(mainWindow, {
