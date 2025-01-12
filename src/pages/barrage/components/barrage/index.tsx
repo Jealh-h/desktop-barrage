@@ -68,10 +68,12 @@ class BarrageItem extends EventEmitter {
     };
   }
 
-  calcTopOffset(offsetProportion: number) {
-    const { fontSize = DEFAULT_FONT_SIZE } = this.barrageConfig.style || {};
+  calcTopOffset() {
+    // calcTopOffset(offsetProportion: number) {
+    // const { fontSize = DEFAULT_FONT_SIZE } = this.barrageConfig.style || {};
+    const windowHeight = window.innerHeight;
     this.updateStyle({
-      ["--offsetTop"]: Number(fontSize) * offsetProportion + "px",
+      ["--offsetTop"]: Math.random() * windowHeight + "px",
     });
   }
 
@@ -153,7 +155,8 @@ export const useBarrage = () => {
   function pop() {
     const barrageItem = currentBarrageManager.shiftBarrage();
     if (barrageItem) {
-      barrageItem.calcTopOffset(offsetProportion.current);
+      // barrageItem.calcTopOffset(offsetProportion.current);
+      barrageItem.calcTopOffset();
       if (!timer.current) {
         // 间隔一秒复位
         offsetProportion.current += 1;

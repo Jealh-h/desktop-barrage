@@ -13,7 +13,7 @@ export function createTransparentWindow() {
     height: height, // 设置窗口为全屏高度
     frame: false, // 无边框
     transparent: true, // 透明背景
-    alwaysOnTop: false, // 始终在最上层
+    alwaysOnTop: true, // 始终在最上层
     skipTaskbar: true, // 不显示在任务栏中
     webPreferences: {
       nodeIntegration: true,

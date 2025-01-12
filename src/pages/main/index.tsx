@@ -23,6 +23,7 @@ const fontWeightOption = ["normal", "bold", "bolder"];
 export const Main = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
+  const inputFocusRef = React.useRef<boolean>();
   const sendAddBarrageEvent = () => {
     const text = inputRef.current?.value?.trim();
     if (!text) return;
@@ -34,6 +35,12 @@ export const Main = () => {
       }
     );
     inputRef.current.value = "";
+  };
+
+  const onKeyUp = (e: React.KeyboardEvent) => {
+    // if(inputRef.current.focus)
+    if (!inputFocusRef.current || e.code !== "Enter") return;
+    sendAddBarrageEvent();
   };
 
   const getAllValue = () => {
@@ -54,6 +61,9 @@ export const Main = () => {
           autoFocus
           className={styles.input}
           placeholder="发个弹幕试一试吧"
+          onKeyUp={onKeyUp}
+          onFocus={() => (inputFocusRef.current = true)}
+          onBlur={() => (inputFocusRef.current = false)}
           type="text"
         />
         <button className={styles.btn} onMouseUp={sendAddBarrageEvent}>
