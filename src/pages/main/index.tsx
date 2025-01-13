@@ -83,13 +83,9 @@ export const Main = () => {
           <div className={styles.formItem}>
             <label htmlFor="fontSize">
               字体大小：
-              <select name="fontSize">
+              <select defaultValue={defaultFontSize} name="fontSize">
                 {fontSizeOption.map((size) => {
-                  return (
-                    <option key={size} selected={size === defaultFontSize}>
-                      {size}
-                    </option>
-                  );
+                  return <option key={size}>{size}</option>;
                 })}
               </select>
             </label>
@@ -97,7 +93,7 @@ export const Main = () => {
           <div className={styles.formItem}>
             <label htmlFor="color">
               字体颜色：
-              <input name="color" type="color" />
+              <input defaultValue={"#ffffff"} name="color" type="color" />
             </label>
           </div>
           <div className={styles.formItem}>
