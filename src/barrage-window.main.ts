@@ -24,13 +24,13 @@ export function createTransparentWindow() {
 
   // react-router 模式
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {
-    transparentWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL + "/barrage");
+    transparentWindow.loadURL(MAIN_WINDOW_VITE_DEV_SERVER_URL + "/#/barrage");
   } else {
     transparentWindow.loadFile(
-      path.join(
-        __dirname,
-        `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html/barrage`
-      )
+      path.join(__dirname, `../renderer/${MAIN_WINDOW_VITE_NAME}/index.html`),
+      {
+        hash: "barrage",
+      }
     );
   }
 
