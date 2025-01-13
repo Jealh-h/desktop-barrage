@@ -1,9 +1,17 @@
-import { app, BrowserWindow, globalShortcut, dialog } from "electron";
+import {
+  app,
+  BrowserWindow,
+  globalShortcut,
+  Tray,
+  Menu,
+  nativeImage,
+} from "electron";
 import path from "path";
 import started from "electron-squirrel-startup";
 import IpcController from "./common/ipcMain";
 import { createTransparentWindow } from "./barrage-window.main";
 import { IPC_EVENT_CHANNEL_NAME, MAIN_THREAD_FORWARD_EVENT } from "./constants";
+import { TRAY_ICON } from "./constants/icons";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -15,9 +23,9 @@ const createWindow = () => {
   const mainWindow = new BrowserWindow({
     width: 500,
     height: 300,
-    // frame: false, // 无边框
-    // resizable: false,
-    // transparent: true,
+    frame: false, // 无边框
+    resizable: false,
+    transparent: true,
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       nodeIntegration: true,
@@ -34,7 +42,7 @@ const createWindow = () => {
   }
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  // mainWindow.webContents.openDevTools();
 
   // registry keyboard event
   // 注册全局快捷键: Alt + Space
@@ -55,7 +63,7 @@ const createWindow = () => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", () => {
   const transparentWindow = createTransparentWindow();
-  const mainWindow = createWindow();
+  createWindow();
 
   // 发送给 barrage 窗口，添加弹幕
   IpcController.registry(
@@ -78,6 +86,19 @@ app.on("ready", () => {
       );
     }
   );
+  const image = nativeImage.createFromDataURL(TRAY_ICON);
+  const tray = new Tray(image);
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: "退出",
+      type: "normal",
+      click: () => {
+        app.exit();
+      },
+    },
+  ]);
+  tray.setToolTip("This is my application.");
+  tray.setContextMenu(contextMenu);
 
   // 发送给主窗口，通知添加弹幕完成
   // IpcController.registry(

@@ -5,6 +5,8 @@
 
 ## Usage
 
-TODO：insert bilibili video location
+> 目前只构建了 windows 的包
+
+1.
 
 ## feedback

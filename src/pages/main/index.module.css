@@ -16,7 +16,7 @@
   flex: 1;
   border: none;
   padding: 4px 6px;
-  border-radius: 12px 0 0 12px;
+  border-radius: 12px 0 0 0;
   overflow: hidden;
 }
 
@@ -48,12 +48,12 @@
   padding: 8px 16px;
   border-radius: 0 0 12px 12px;
   box-shadow: 0 1px 5px 1px #eee;
+  background-color: #fff;
 }
 
 .formWrapper {
   display: flex;
   flex-wrap: wrap;
-  background-color: #fff;
 }
 
 .formItem {

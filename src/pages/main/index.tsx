@@ -19,6 +19,7 @@ const fontSizeOption = [
   "36px",
 ];
 const fontWeightOption = ["normal", "bold", "bolder"];
+const defaultFontSize = "16px";
 
 export const Main = () => {
   const inputRef = React.useRef<HTMLInputElement>(null);
@@ -85,7 +86,7 @@ export const Main = () => {
               <select name="fontSize">
                 {fontSizeOption.map((size) => {
                   return (
-                    <option key={size} value={size}>
+                    <option key={size} selected={size === defaultFontSize}>
                       {size}
                     </option>
                   );
