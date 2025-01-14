@@ -15,4 +15,10 @@
 
 4. 输入文字到 input 框，进行桌面弹幕发送
 
+![](https://cdn.jsdelivr.net/gh/PancakeDogLLL/imageBed/img/2025-01-15%20000213.png)
+
+<center>demo</center>
+
 ## feedback
+
+- [issues](https://github.com/Jealh-h/desktop-barrage/issues)

@@ -8,7 +8,7 @@
 .barrage-item {
   position: absolute;
   left: var(--offset, 0);
-  top: var(--offsetTop, 0);
+  top: var(--offsetTop, 100vw);
   animation-name: roll;
   animation-timing-function: linear;
   animation-fill-mode: forwards;
