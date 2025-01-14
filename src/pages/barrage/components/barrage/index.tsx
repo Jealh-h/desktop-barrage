@@ -190,7 +190,7 @@ const BarrageItemComp: React.FC<{ barrageItem: BarrageItem }> = (props) => {
     };
     // 终止位置
     const end = {
-      ["--translateX"]: -(windowWidth + nodeWidth * 2) + "px",
+      ["--translateX"]: -(windowWidth + INIT_OFFSET_LEFT + nodeWidth) + "px",
     };
 
     setStyle({
