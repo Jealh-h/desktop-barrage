@@ -7,6 +7,12 @@
 
 > 目前只构建了 windows 的包
 
-1.
+1. 下载 release 的文件并解压
+
+2. 打开 danmu.exe
+
+3. alt + 空格 隐藏显示弹幕输入
+
+4. 输入文字到 input 框，进行桌面弹幕发送
 
 ## feedback
