@@ -1,8 +1,8 @@
 import React, {
   ReactNode,
-  useEffect,
   useImperativeHandle,
   useRef,
+  useLayoutEffect,
   useState,
 } from "react";
 import "./index.css";
@@ -200,7 +200,7 @@ const BarrageItemComp: React.FC<{ barrageItem: BarrageItem }> = (props) => {
     });
   };
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     calcElePos();
   }, []);
 
