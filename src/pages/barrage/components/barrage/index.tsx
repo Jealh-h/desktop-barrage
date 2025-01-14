@@ -6,6 +6,7 @@ import React, {
   useState,
 } from "react";
 import "./index.css";
+import { INIT_OFFSET_LEFT } from "../../../../constants";
 
 class EventEmitter {
   private eventMap: Record<string, Array<Function>> = {};
@@ -76,12 +77,6 @@ class BarrageItem extends EventEmitter {
       ["--offsetTop"]: Math.random() * windowHeight + "px",
     });
   }
-
-  start() {}
-
-  update() {
-    // 计算位移
-  }
 }
 
 class BarrageManager extends EventEmitter {
@@ -116,7 +111,6 @@ class BarrageManager extends EventEmitter {
     // 没有弹幕则直接退出
     if (!this.barrageQueue.length) return;
     const barrageItem = this.shiftBarrage();
-    barrageItem.start();
     barrageItem.on(BarrageItemEventEnum.ENTERED, () => {
       this.startQueue();
     });
@@ -188,7 +182,7 @@ const BarrageItemComp: React.FC<{ barrageItem: BarrageItem }> = (props) => {
     const textNode = textDom.current;
     const nodeWidth = textNode.clientWidth;
     const windowWidth = window.innerWidth;
-    const offsetWidth = nodeWidth + windowWidth + "px";
+    const offsetWidth = INIT_OFFSET_LEFT + windowWidth + "px";
 
     // 起点位置
     const start = {
